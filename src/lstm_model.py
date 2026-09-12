@@ -39,6 +39,14 @@ def isolate_series(df: pd.DataFrame, store: int | None = None) -> pd.Series:
     ``store=None`` aggregates total network sales per day (used for the
     stationarity/ACF diagnostics, where one clean series is easier to read).
     A specific store id isolates that store's own trading history instead.
+
+    Per-store series only include trading days (``Sales > 0``), so a store
+    that closes on Sundays yields a series of *consecutive trading days*
+    with calendar gaps skipped, not one entry per calendar date. A sliding
+    window therefore learns "the last N trading days" rather than "the last
+    N calendar days" -- consistent with how the weekday-closure pattern
+    repeats, and simpler than padding closed days back in, but worth noting
+    if the window length is ever interpreted as a literal day count.
     """
     work = df[df["Sales"] > 0]
     if store is not None:

@@ -32,3 +32,7 @@ jupyter==1.1.1
 notebook==7.6.0
 nbformat==5.10.4
 ipykernel==7.2.0
+
+# Report generation (final blog-style PDF)
+fpdf2==2.8.5
+python-pptx==1.0.2

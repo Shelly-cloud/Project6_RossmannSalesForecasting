@@ -18,6 +18,7 @@ import matplotlib.pyplot as plt
 import mlflow
 import numpy as np
 import pandas as pd
+import tensorflow as tf
 
 from src import viz
 from src.cleaning import clean_dataset
@@ -45,7 +46,9 @@ logger.info("=" * 70)
 logger.info("TASK 2.6 - DEEP LEARNING (LSTM) FORECASTER")
 logger.info("=" * 70)
 
-train_raw = load_dataset("train")
+# with_external=False: the LSTM only ever consumes the isolated Sales
+# series, so the weather/trend/state join would just be wasted work.
+train_raw = load_dataset("train", with_external=False)
 clean = clean_dataset(train_raw, outlier_strategy="flag", for_training=True)
 
 # ---- Step 1: isolate a time series -----------------------------------
@@ -63,10 +66,10 @@ acf_table.to_csv(REPORTS_DIR / "lstm_acf_pacf.csv", index=False)
 fig, axes = plt.subplots(1, 3, figsize=(15, 4.2))
 
 ax = axes[0]
-ax.plot(national.index, national.values, color=viz.SERIES[0], linewidth=1.2)
+ax.plot(national.index, national.values / 1000, color=viz.SERIES[0], linewidth=1.2)
 viz.finish(ax, "National daily sales, raw series",
            f"{'Non-' if was_differenced else ''}stationary by ADF test",
-           "Total sales", "Date")
+           "Total sales (thousands)", "Date")
 
 ax = axes[1]
 ax.bar(acf_table["lag"], acf_table["acf"], color=viz.SERIES[0], width=0.6)
@@ -122,11 +125,7 @@ with mlflow.start_run(run_name="lstm"):
         data["X_train"], data["y_train"],
         validation_data=(data["X_val"], data["y_val"]),
         epochs=25, batch_size=256, verbose=0,
-        callbacks=[
-            __import__("tensorflow").keras.callbacks.EarlyStopping(
-                patience=4, restore_best_weights=True
-            )
-        ],
+        callbacks=[tf.keras.callbacks.EarlyStopping(patience=4, restore_best_weights=True)],
     )
     fit_seconds = time.time() - t0
     logger.info("LSTM trained in %.1fs over %d epochs", fit_seconds, len(history.history["loss"]))

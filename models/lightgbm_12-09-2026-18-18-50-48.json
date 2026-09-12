@@ -1,0 +1,15 @@
+{
+  "timestamp": "12-09-2026-18-18-50-48",
+  "model_name": "lightgbm",
+  "file": "lightgbm_12-09-2026-18-18-50-48.pkl",
+  "metrics": {
+    "valid_rmspe": 0.12937621610176364,
+    "valid_rmse": 929.6597290285067,
+    "valid_mae": 635.7966769328381,
+    "valid_mape": 0.0945310455957176,
+    "valid_r2": 0.9073771754589255
+  },
+  "fit_seconds": 105.55483269691467,
+  "n_features": 78,
+  "train_rows": 804056
+}

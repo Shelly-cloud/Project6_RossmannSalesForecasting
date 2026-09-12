@@ -75,12 +75,14 @@ def tree_prediction_interval_sales(
 
     Because log1p is monotonic, percentiles computed in log space are still
     valid percentiles after transforming back -- expm1 of a percentile is the
-    corresponding percentile on the original scale.
+    corresponding percentile on the original scale. ``tree_std`` is a spread
+    *in log space*, not a point value, so expm1 does not apply to it -- it is
+    carried through unchanged, renamed to make that explicit.
     """
     log_result = tree_prediction_interval(pipe, X_raw, lower, upper)
-    return log_result.apply(np.expm1).rename(
-        columns={"tree_std": "tree_std_log"}
-    ).assign(tree_std_log=log_result["tree_std"])
+    result = log_result[["prediction", "lower", "upper"]].apply(np.expm1)
+    result["tree_std_log"] = log_result["tree_std"]
+    return result
 
 
 def permutation_importance_report(

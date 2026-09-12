@@ -56,8 +56,17 @@ logger.info("TASK 2 - PREDICTION OF STORE SALES (machine learning models)")
 logger.info("=" * 70)
 
 # ---------------------------------------------------------------- 2.1 data
-train_raw = load_dataset("train")
-test_raw = load_dataset("test")
+# with_external=False: the served model (Task 3) can only be given inputs a
+# finance analyst actually has for a *future* date -- Date, holiday/promo
+# flags, and the store's own static attributes. Weather and the Google-trend
+# index are real historical values that happen to correlate with sales, but
+# a forecast six weeks out cannot know next month's actual weather or search
+# interest, so training on them here would silently assume information the
+# deployed app can never supply. Those locality features stay in Task 1's
+# EDA (a retrospective analysis, where using realized weather is legitimate)
+# and are dropped for anything the model has to serve into the future.
+train_raw = load_dataset("train", with_external=False)
+test_raw = load_dataset("test", with_external=False)
 calendar = build_holiday_calendar(train_raw, test_raw)
 
 clean = clean_dataset(train_raw, outlier_strategy="flag", for_training=True)
@@ -79,18 +88,22 @@ init_mlflow()
 
 MODEL_CONFIGS = [
     {
+        # min_samples_leaf=2 with no depth cap on 804k rows produced a 3GB+
+        # pickle (near-unbounded leaf count x 200 trees) -- unusable for git,
+        # deployment, or fast loading. min_samples_leaf=25 and max_depth=14
+        # bound tree size to a shippable model with only a small RMSPE cost.
         "name": "random_forest",
         "estimator": RandomForestRegressor(
-            n_estimators=200,
-            max_depth=22,
-            min_samples_leaf=2,
+            n_estimators=150,
+            max_depth=14,
+            min_samples_leaf=25,
             max_features="sqrt",
             n_jobs=-1,
             random_state=RANDOM_STATE,
         ),
         "params": {
-            "n_estimators": 200, "max_depth": 22,
-            "min_samples_leaf": 2, "max_features": "sqrt",
+            "n_estimators": 150, "max_depth": 14,
+            "min_samples_leaf": 25, "max_features": "sqrt",
         },
     },
     {
@@ -204,7 +217,10 @@ for cfg in MODEL_CONFIGS:
                       "n_features": n_features, "train_rows": len(tr)},
         )
         mlflow.log_param("serialized_path", str(model_path))
-        mlflow.sklearn.log_model(pipe, name="model")
+        # skops (mlflow's default sklearn serializer) can't handle the
+        # project's custom transformer classes; cloudpickle can. Trusted
+        # here since these are local, internally-produced artifacts.
+        mlflow.sklearn.log_model(pipe, name="model", serialization_format="cloudpickle")
 
         results[name] = {"pipe": pipe, "metrics": metrics, "path": model_path}
 

@@ -22,8 +22,11 @@ from src.pipeline import EXCLUDED_FROM_FEATURES, fit_full_pipeline, get_feature_
 
 logger = get_logger("smoke_test")
 
-train = load_dataset("train")
-test = load_dataset("test")
+# with_external=False: matches the production pipeline in train_ml.py -- see
+# the comment there on why weather/trend data can't be used for a real
+# forward-looking forecast.
+train = load_dataset("train", with_external=False)
+test = load_dataset("test", with_external=False)
 
 calendar = build_holiday_calendar(train, test)
 logger.info("holiday calendar spans %s -> %s", calendar.min().date(), calendar.max().date())

@@ -28,7 +28,11 @@ logger = get_logger("app.predictor")
 _STATE = {"pipe": None, "meta": None, "store_df": None, "holiday_calendar": None}
 
 
-def _ensure_loaded(model_name: str | None = "random_forest") -> None:
+def _ensure_loaded(model_name: str | None = "lightgbm") -> None:
+    # LightGBM is the default: it validated more accurately than the Random
+    # Forest (lower RMSPE) and is roughly 20x smaller on disk, which matters
+    # for deploy cold-starts and memory. The Random Forest remains loadable
+    # via reload_model() when its tree-spread confidence interval is wanted.
     if _STATE["pipe"] is not None:
         return
     try:
