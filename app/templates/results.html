@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+{% block content %}
+  <section class="card">
+    <div class="results-header">
+      <h1>Forecast for Store {{ store_id }}</h1>
+      <a class="button" href="{{ url_for('index') }}">&larr; New forecast</a>
+    </div>
+
+    <div class="stat-row">
+      <div class="stat-tile">
+        <div class="stat-label">Forecast horizon</div>
+        <div class="stat-value">{{ n_days }} days</div>
+      </div>
+      <div class="stat-tile">
+        <div class="stat-label">Total predicted sales</div>
+        <div class="stat-value">{{ "{:,.0f}".format(total_sales) }}</div>
+      </div>
+      {% if total_customers is not none %}
+      <div class="stat-tile">
+        <div class="stat-label">Total predicted customers</div>
+        <div class="stat-value">{{ "{:,}".format(total_customers) }}</div>
+      </div>
+      {% endif %}
+    </div>
+
+    <img class="chart" src="data:image/png;base64,{{ chart_b64 }}" alt="Predicted sales chart" />
+
+    <a class="button primary" href="{{ url_for('download', token=token) }}">Download predictions as CSV</a>
+  </section>
+
+  <section class="card">
+    <h2>Prediction table</h2>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>{% for c in columns %}<th>{{ c }}</th>{% endfor %}</tr>
+        </thead>
+        <tbody>
+          {% for row in rows %}
+          <tr>
+            {% for c in columns %}<td>{{ row[c] }}</td>{% endfor %}
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </section>
+{% endblock %}

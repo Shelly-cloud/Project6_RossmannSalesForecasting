@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+{% block content %}
+  <section class="card">
+    <h1>Forecast store sales &amp; customers</h1>
+    <p class="muted">
+      Choose a store and upload a CSV of the dates you want forecast. Each row can carry
+      <code>IsHoliday</code>, <code>IsWeekend</code>, <code>IsPromo</code> and
+      <code>SchoolHoliday</code> flags (0/1) &mdash; missing columns default to 0.
+    </p>
+
+    {% if error %}
+      <div class="alert">{{ error }}</div>
+    {% endif %}
+
+    <form action="{{ url_for('predict') }}" method="post" enctype="multipart/form-data" class="form">
+      <label for="store_id">Store</label>
+      <select name="store_id" id="store_id" required>
+        {% for s in stores %}
+          <option value="{{ s }}">Store {{ s }}</option>
+        {% endfor %}
+      </select>
+
+      <label for="csv_file">Date parameters (CSV)</label>
+      <input type="file" name="csv_file" id="csv_file" accept=".csv" required />
+
+      <button type="submit">Run forecast</button>
+    </form>
+
+    <p class="muted small">
+      Not sure of the format?
+      <a href="{{ url_for('sample_csv') }}">Download a 6-week template CSV</a>.
+    </p>
+  </section>
+
+  <section class="card">
+    <h2>Model in use</h2>
+    {% if meta %}
+      <dl class="meta">
+        <dt>File</dt><dd>{{ meta.get('file', 'n/a') }}</dd>
+        <dt>Trained</dt><dd>{{ meta.get('timestamp', 'n/a') }}</dd>
+        {% if meta.get('metrics') %}
+          <dt>Validation RMSPE</dt><dd>{{ '%.4f' % meta['metrics'].get('valid_rmspe', 0) }}</dd>
+          <dt>Validation MAE</dt><dd>{{ '%.1f' % meta['metrics'].get('valid_mae', 0) }}</dd>
+        {% endif %}
+      </dl>
+    {% else %}
+      <p class="muted">No model metadata found yet &mdash; run <code>scripts/train_ml.py</code> first.</p>
+    {% endif %}
+  </section>
+{% endblock %}

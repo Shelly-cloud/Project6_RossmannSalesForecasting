@@ -1,0 +1,34 @@
+# Core data science
+pandas==2.3.3
+numpy==2.2.6
+scipy==1.15.3
+scikit-learn==1.7.2
+joblib==1.5.3
+
+# Visualization
+matplotlib==3.10.9
+seaborn==0.13.2
+plotly==6.9.0
+
+# Gradient boosting (Task 2.2 model comparison)
+lightgbm==4.7.0
+xgboost==3.2.0
+shap==0.49.1
+
+# Time series (Task 2.6)
+statsmodels==0.15.0
+tensorflow-cpu==2.21.0
+
+# MLOps (Task 2.7 + versioning)
+mlflow==3.16.0
+dvc==3.67.1
+
+# Web app (Task 3)
+Flask==3.1.3
+gunicorn==23.0.0
+
+# Notebook (Task 1 deliverable)
+jupyter==1.1.1
+notebook==7.6.0
+nbformat==5.10.4
+ipykernel==7.2.0

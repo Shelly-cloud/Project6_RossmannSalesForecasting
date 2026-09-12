@@ -1,0 +1,5 @@
+outs:
+- md5: f55e3a2f7d84734a6c4b43b804ebb68c
+  size: 265
+  hash: md5
+  path: state_names.csv

@@ -1,0 +1,5 @@
+outs:
+- md5: 44a3ec2256fb9d084661afe4cdaaa7cf
+  size: 9051
+  hash: md5
+  path: store_states.csv

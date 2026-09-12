@@ -1,0 +1,31 @@
+# Data (tracked by DVC instead of git -- DVC manages its own .gitignore
+# entries under data/raw/ and data/processed/ for the actual file contents;
+# the small .dvc pointer files themselves are committed to git normally)
+/data/processed/*.csv
+!/data/processed/.gitkeep
+
+# Models (large binaries; keep .json metadata for traceability)
+/models/*.pkl
+/models/*.keras
+!/models/.gitkeep
+
+# MLflow
+/mlruns/
+
+# Logs
+/logs/*.log
+
+# Python
+__pycache__/
+*.pyc
+.ipynb_checkpoints/
+*.egg-info/
+.venv/
+venv/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Env / secrets
+.env

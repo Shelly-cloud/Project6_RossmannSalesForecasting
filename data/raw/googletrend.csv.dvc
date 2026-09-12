@@ -1,0 +1,5 @@
+outs:
+- md5: a680b2322439259f4e2d652eb04360db
+  size: 86605
+  hash: md5
+  path: googletrend.csv
