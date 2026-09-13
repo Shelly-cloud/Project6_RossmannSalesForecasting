@@ -27,5 +27,8 @@ venv/
 .DS_Store
 Thumbs.db
 
+# Office lock files
+~$*
+
 # Env / secrets
 .env

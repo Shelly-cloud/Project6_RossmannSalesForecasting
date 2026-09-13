@@ -1,0 +1,15 @@
+{
+  "timestamp": "12-09-2026-18-15-52-17",
+  "model_name": "random_forest",
+  "file": "random_forest_12-09-2026-18-15-52-17.pkl",
+  "metrics": {
+    "valid_rmspe": 0.13946724648517106,
+    "valid_rmse": 1060.7421222005303,
+    "valid_mae": 721.7630250224911,
+    "valid_mape": 0.10405340074335406,
+    "valid_r2": 0.8794160201277552
+  },
+  "fit_seconds": 180.31883883476257,
+  "n_features": 78,
+  "train_rows": 804056
+}
